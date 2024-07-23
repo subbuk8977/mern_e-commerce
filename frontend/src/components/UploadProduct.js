@@ -46,6 +46,8 @@ const UploadProduct = ({
         productImage : [ ...preve.productImage, uploadImageCloudinary.url]
       }
     })
+
+    console.log(uploadImageCloudinary);
   }
 
   const handleDeleteProductImage = async(index)=>{

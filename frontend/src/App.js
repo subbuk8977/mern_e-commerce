@@ -15,30 +15,52 @@ function App() {
   const dispatch = useDispatch()
   const [cartProductCount,setCartProductCount] = useState(0)
 
-  const fetchUserDetails = async()=>{
-      const dataResponse = await fetch(SummaryApi.current_user.url,{
-        method : SummaryApi.current_user.method,
-        credentials : 'include'
-      })
-
-      const dataApi = await dataResponse.json()
-
-      if(dataApi.success){
-        dispatch(setUserDetails(dataApi.data))
+  const fetchUserDetails = async () => {
+    try {
+      const response = await fetch(SummaryApi.current_user.url, {
+        method: SummaryApi.current_user.method,
+        credentials: 'include', // Include cookies if needed
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-  }
+  
+      const dataApi = await response.json();
+  
+      if (dataApi.success) {
+        dispatch(setUserDetails(dataApi.data));
+      } else {
+        console.error('Failed to fetch user details:', dataApi.message);
+      }
+    } catch (error) {
+      console.error('Fetch user details error:', error);
+    }
+  };
 
-  const fetchUserAddToCart = async()=>{
-    const dataResponse = await fetch(SummaryApi.addToCartProductCount.url,{
-      method : SummaryApi.addToCartProductCount.method,
-      credentials : 'include'
-    })
-
-    const dataApi = await dataResponse.json()
-
-    setCartProductCount(dataApi?.data?.count)
-  }
-
+  const fetchUserAddToCart = async () => {
+    try {
+      const response = await fetch(SummaryApi.addToCartProductCount.url, {
+        method: SummaryApi.addToCartProductCount.method,
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const dataApi = await response.json();
+      setCartProductCount(dataApi?.data?.count || 0);
+    } catch (error) {
+      console.error('Fetch cart product count error:', error);
+    }
+  };
   useEffect(()=>{
     /**user Details */
     fetchUserDetails()
